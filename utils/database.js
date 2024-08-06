@@ -1,3 +1,4 @@
+// utils/database.js
 import mongoose from 'mongoose';
 
 let isConnected = false;
@@ -13,6 +14,8 @@ export const connectToDB = async () => {
 	try {
 		await mongoose.connect(process.env.MONGODB_URI, {
 			dbName: 'Share_prompt',
+			serverSelectionTimeoutMS: 60000,
+			socketTimeoutMS: 60000,
 		});
 
 		isConnected = true;
