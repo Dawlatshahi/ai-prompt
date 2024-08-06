@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import PromptCard from './PromptCard';
 
 const PromptCardList = ({ data, handleTagClick }) => {
@@ -19,32 +20,21 @@ const PromptCardList = ({ data, handleTagClick }) => {
 
 const Feed = () => {
 	const [allPosts, setAllPosts] = useState([]);
+
+	// Search states
 	const [searchText, setSearchText] = useState('');
 	const [searchTimeout, setSearchTimeout] = useState(null);
 	const [searchedResults, setSearchedResults] = useState([]);
 
 	const fetchPosts = async () => {
-		try {
-			const response = await fetch('/api/prompt');
-			if (!response.ok) throw new Error('Failed to fetch posts');
-			const data = await response.json();
-			console.log('Fetched posts:', data); // Log fetched data for debugging
-			setAllPosts(data);
-		} catch (error) {
-			console.error('Error fetching posts:', error); // Log errors
-		}
+		const response = await fetch('/api/prompt');
+		const data = await response.json();
+
+		setAllPosts(data);
 	};
 
 	useEffect(() => {
 		fetchPosts();
-
-		// Polling mechanism to refresh data every 60 seconds
-		const intervalId = setInterval(() => {
-			fetchPosts();
-		}, 60000); // 60 seconds
-
-		// Cleanup interval on component unmount
-		return () => clearInterval(intervalId);
 	}, []);
 
 	const filterPrompts = (searchtext) => {
@@ -58,13 +48,13 @@ const Feed = () => {
 	};
 
 	const handleSearchChange = (e) => {
-		const value = e.target.value;
-		setSearchText(value);
-
 		clearTimeout(searchTimeout);
+		setSearchText(e.target.value);
+
+		// debounce method
 		setSearchTimeout(
 			setTimeout(() => {
-				const searchResult = filterPrompts(value);
+				const searchResult = filterPrompts(e.target.value);
 				setSearchedResults(searchResult);
 			}, 500)
 		);
@@ -89,15 +79,6 @@ const Feed = () => {
 					className="search_input peer"
 				/>
 			</form>
-
-			{/* Manual refresh button with Font Awesome icon */}
-			<button
-				onClick={fetchPosts}
-				className="refresh_button"
-				aria-label="Refresh Feed"
-			>
-				<i className="fas fa-sync-alt"></i> Refresh Feed
-			</button>
 
 			{/* All Prompts */}
 			{searchText ? (
