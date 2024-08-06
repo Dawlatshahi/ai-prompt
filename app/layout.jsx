@@ -1,5 +1,6 @@
 import Nav from '@components/Nav';
 import Provider from '@components/Provider';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import '@styles/globals.css';
 export const metadata = {
 	title: 'AI Prompt',
